@@ -1,0 +1,112 @@
+/*
+Rules for method overloading
+1)By changing method signature
+2)Name of method should be same for the overloaded methods
+3)Return type of method is not a part of method signature,so changing return type will not overload
+4)Perform automatic promotion when it can't find a matching method
+        char>int>long>float>double
+        byte>short>int>long>float>double
+5)While resolving overloaded methods compiler will always give precedence for child type argument,then it will
+check for parent type argument
+6)While resolving overloaded methods if 2 parameters are at the same level then there will be compile time error
+7)In overloading,method resolution always takes by compiler based on reference type
+8)var-arg method will get least priority.i.e. if no other method matched then only var-arg method will get chance
+ */
+public class RulesOfOverloading {
+    public void m5(Rule_7A a){
+        System.out.println("Parent");
+    }
+    public void m5(Rule_7B b){
+        System.out.println("Child");
+    }
+    public static void main(String[] args) {
+        Rule_1_2_3 a = new Rule_1_2_3();
+        a.m1();
+        a.m1(5);
+        Rule_4 b = new Rule_4();
+        b.m2('a'); //char promoted to int
+        b.m2(5L); //long promoted to float
+        //b.m2(10.5); Throws error as double cannot be promoted further
+        Rule_5 c = new Rule_5();
+        c.m3("String");
+        c.m3(new Object());
+        c.m3(null); //Will print "String version" as null is both object & string type also String is
+        //child of object
+        Rule_6 d = new Rule_6();
+        d.m4("Name");
+        d.m4(new StringBuffer("NameSb"));
+        //d.m4(null); Throws error as null satisfies both string & Stringbuffer and they are of same level
+        RulesOfOverloading rule7 = new RulesOfOverloading();
+        Rule_7A e = new Rule_7A();
+        rule7.m5(e);
+        Rule_7B f = new Rule_7B();
+        rule7.m5(f);
+        Rule_7A ef = new Rule_7B(); //Reference of Rule_7A type
+        rule7.m5(ef);  //Method resolution taken care by reference type rather than any holding object
+        Rule_8 g = new Rule_8();
+        g.m6(); //will print var arg method
+        g.m6(10); //will print not var arg method
+        g.m6(10,20); //will print var arg method
+    }
+}
+
+class Rule_1_2_3{
+    public void m1(){
+        System.out.println("No parameter method");
+    }
+    /*
+    public int m1(){
+        System.out.println("No parameter method");
+        return 0;
+    }
+    Throws error,as return type is not a part of method signature
+     */
+    public int m1(int i){
+        System.out.println("Changed return type method");
+        return i;
+    }
+}
+
+class Rule_4 {
+    public void m2(int i){
+        System.out.println("Integer argument");
+    }
+    public void m2(float f){
+        System.out.println("Float argument");
+    }
+}
+
+class Rule_5{
+    public void m3(String str){
+        System.out.println("String version"); //child
+    }
+    public void m3(Object obj){
+        System.out.println("Object version"); //parent
+    }
+}
+
+class Rule_6{
+    public void m4(String str){
+        System.out.println("String version");
+    }
+    public void m4(StringBuffer sbr){
+        System.out.println("StringBuffer version");
+    }
+}
+
+class Rule_7A{
+
+}
+
+class Rule_7B extends Rule_7A{
+
+}
+
+class Rule_8{
+    public void m6(int... i){
+        System.out.println("Var arg method");
+    }
+    public void m6(int i){
+        System.out.println("Not var arg method");
+    }
+}
